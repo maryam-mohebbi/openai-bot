@@ -1,6 +1,7 @@
 from adapters import telegram_adapter as bot
 from adapters import openai_adapter as ai
 from services import commands
+from adapters import mysql_adapter as mysql
 
 
 def setup_bot(token):
@@ -12,6 +13,10 @@ def setup_bot(token):
     return builder
 
 
+def setup_mysql(HOST, PORT, USER, PASSWORD, DATABASE):
+    mysql.sql_setup(HOST, PORT, USER, PASSWORD, DATABASE)
+
+
 def setup_ai(key):
     ai.setup(key)
 
@@ -20,7 +25,8 @@ def start_bot(builder):
     bot.start(builder)
 
 
-def run(BOT_TOKEN, OPENAI_API_KEY):
+def run(BOT_TOKEN, OPENAI_API_KEY, HOST, PORT, USER, PASSWORD, DATABASE):
+    setup_mysql(HOST, PORT, USER, PASSWORD, DATABASE)
     setup_ai(OPENAI_API_KEY)
 
     builder = setup_bot(BOT_TOKEN)

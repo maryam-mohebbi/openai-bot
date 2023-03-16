@@ -1,6 +1,6 @@
-import os
 from adapters import telegram_adapter as bot
 from adapters import openai_adapter as openai
+from adapters import mysql_adapter as mysql
 
 
 async def start(update, context):
@@ -22,12 +22,23 @@ async def chat(update, context):
 
 
 async def handle_text(update, context):
-    print(f'''
-    ** Username: {update.message.from_user.username}
-    ** Date: {update.message.date}
-    ** Message id: {update.message.message_id}
-    ** Message:  {update.message.text}
-    ''')
+
+    print(
+        f'''
+        ** chat_id : {update.message.chat.id},
+        ** username : {update.message.chat.username},
+        ** datetime : {update.message.date},
+        ** message_id : {update.message.message_id},
+        ** text : {update.message.text},
+        ** reply_message_id : {update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None})'''
+    )
+
+    mysql.insert_message(chat_id=update.message.chat.id,
+                         username=update.message.chat.username,
+                         datetime=update.message.date,
+                         message_id=update.message.message_id,
+                         text=update.message.text,
+                         reply_message_id=update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None)
 
     text = update.message.text
     try:
