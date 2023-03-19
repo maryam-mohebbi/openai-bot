@@ -46,7 +46,10 @@ async def handle_text(update, context):
     text = update.message.text
     try:
         response = openai.generate_response(text)
-        await bot.reply_text(update, response, update.message.message_id)
+        mysql.update_message_tokens(update.message.message_id,
+                                    response['tokens']['completion_tokens'],
+                                    response['tokens']['prompt_tokens'])
+        await bot.reply_text(update, response['content'], update.message.message_id)
 
     except Exception as e:
         print(e)
