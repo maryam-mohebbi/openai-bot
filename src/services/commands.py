@@ -29,9 +29,12 @@ async def handle_text(update, context):
         ** username : {update.message.chat.username},
         ** datetime : {update.message.date},
         ** message_id : {update.message.message_id},
-        ** text : {update.message.text},
         ** reply_message_id : {update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None})'''
     )
+
+    if mysql.does_user_exist(update.message.chat.username) == False:
+        await bot.reply_text(update, 'Oh, Sorry! You do not have access')
+        return
 
     mysql.insert_message(chat_id=update.message.chat.id,
                          username=update.message.chat.username,

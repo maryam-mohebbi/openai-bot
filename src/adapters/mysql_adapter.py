@@ -23,7 +23,18 @@ def insert_message(chat_id, username, datetime, message_id, text, reply_message_
     cursor.execute(sql, val)
     cnx.commit()
 
-    print(f'''
-    {sql}
-    {val}
-    ''')
+
+def does_user_exist(username):
+    global cnx
+    cursor = cnx.cursor()
+    sql = "SELECT USERNAME FROM USERS WHERE USERNAME = %s"
+    val = (username,)
+    cursor.execute(sql, val)
+    result = cursor.fetchone()
+    cnx.commit()
+    print(val, result)
+
+    if result is not None:
+        return True
+    else:
+        return False
