@@ -1,5 +1,8 @@
 from bot import run
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 
 def get_config(config_name):

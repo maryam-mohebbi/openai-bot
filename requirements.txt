@@ -1,0 +1,5 @@
+python-telegram-bot
+openai
+requests
+mysql-connector-python
+python-dotenv==0.19.2
