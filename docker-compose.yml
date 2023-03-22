@@ -1,0 +1,26 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=mysql://botuser:botpassword@db:3306/botdb
+      - HOST=db
+    volumes:
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+      - ./.env:/.env
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE=botdb
+      - MYSQL_USER=botuser
+      - MYSQL_PASSWORD=botpassword
+      - MYSQL_ROOT_PASSWORD=root_password
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
