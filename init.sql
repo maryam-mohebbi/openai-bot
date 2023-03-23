@@ -1,9 +1,7 @@
--- Create the botdb database
-CREATE DATABASE IF NOT EXISTS botdb;
+CREATE DATABASE IF NOT EXISTS openai_db;
 
--- Create the botuser
+
 CREATE USER IF NOT EXISTS 'botuser'@'%' IDENTIFIED BY 'botpassword';
 
--- Grant necessary privileges to the botuser
-GRANT ALL PRIVILEGES ON botdb.* TO 'botuser'@'%';
+GRANT ALL PRIVILEGES ON openai_db.* TO 'botuser'@'%'; 
 FLUSH PRIVILEGES;

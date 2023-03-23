@@ -7,15 +7,19 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=mysql://botuser:botpassword@db:3306/botdb
+      - MYSQL_DATABASE=openai_db
+      - DATABASE_URL=mysql://botuser:botpassword@db:3306/openai_db
       - HOST=db
+      - PORT=3306
+      - DB_USER=botuser
+      - PASSWORD=botpassword
     volumes:
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql
-      - ./.env:/.env
+      - ./src/config/.env:/app/src/config/.env
   db:
     image: mysql:8.0
     environment:
-      - MYSQL_DATABASE=botdb
+      - MYSQL_DATABASE=openai_db
       - MYSQL_USER=botuser
       - MYSQL_PASSWORD=botpassword
       - MYSQL_ROOT_PASSWORD=root_password
