@@ -29,7 +29,7 @@ async def handle_text(update, context):
         ** username : {update.message.chat.username},
         ** datetime : {update.message.date},
         ** message_id : {update.message.message_id},
-        ** reply_message_id : {update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None})'''
+        ** reply_message_id : {update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None}'''
     )
 
     if mysql.does_user_exist(update.message.chat.username) == False:
