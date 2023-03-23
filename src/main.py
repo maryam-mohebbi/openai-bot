@@ -1,6 +1,7 @@
 from bot import run
 from dotenv import load_dotenv
 import os
+import pathlib
 
 
 def get_config(config_name):
@@ -8,7 +9,8 @@ def get_config(config_name):
 
 
 if __name__ == '__main__':
-    load_dotenv('src/config/.env')
+    dotenv_path = pathlib.Path(__file__).parent.joinpath('config/.env')
+    load_dotenv(dotenv_path)
     BOT_TOKEN = get_config('BOT_TOKEN')
     OPENAI_API_KEY = get_config('OPENAI_API_KEY')
     HOST = get_config('HOST')
