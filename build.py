@@ -7,7 +7,7 @@ use_plugin('python.coverage')
 use_plugin('python.distutils')
 
 
-name = 'cryptocurrency_price_bot'
+name = 'openai-bot'
 default_task = 'publish'
 
 
