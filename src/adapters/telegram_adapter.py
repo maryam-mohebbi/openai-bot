@@ -11,7 +11,7 @@ def add_command_handler(builder, command, fn):
 
 
 def add_message_handler(builder, fn):
-    builder.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), fn))
+    builder.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, fn))
 
 
 async def reply_text(update, text, message_id=None):
