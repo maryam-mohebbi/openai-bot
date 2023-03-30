@@ -36,6 +36,10 @@ async def handle_text(update, context):
         await bot.reply_text(update, 'Oh, Sorry! You do not have access')
         return
 
+    if mysql.tokens_count(update.message.chat.username) == False:
+        await bot.reply_text(update, 'Sorry, The sum of tokens has exceeded 1000.')
+        return
+
     mysql.insert_message(chat_id=update.message.chat.id,
                          username=update.message.chat.username,
                          datetime=update.message.date,

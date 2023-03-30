@@ -45,3 +45,38 @@ def update_message_tokens(message_id, completion_tokens, prompt_tokens):
     val = (completion_tokens, prompt_tokens, message_id)
     cursor.execute(sql, val)
     cnx.commit()
+
+
+def tokens_count(username):
+    global cnx
+    cursor = cnx.cursor()
+    val = (username,)
+
+    # Check if the user exists in the MESSAGES table
+    sql_check_user = 'SELECT COUNT(*) FROM MESSAGES WHERE USERNAME = %s;'
+    cursor.execute(sql_check_user, val)
+    user_count = cursor.fetchone()[0]
+
+    if user_count == 0:
+        return True
+
+    sql_token = 'SELECT SUM(COMPLETION_TOKENS) as TOTAL_COMPLETION_TOKENS , SUM(PROMPT_TOKENS) as TOTAL_PROMPT_TOKENS FROM MESSAGES WHERE USERNAME =%s;'
+    sql_limitation = 'SELECT TOKEN_LIMITATION FROM USERS WHERE USERNAME =%s;'
+
+    cursor.execute(sql_token, val)
+    result_token = cursor.fetchone()
+
+    cursor.execute(sql_limitation, val)
+    result_limitation = cursor.fetchone()
+
+    cnx.commit()
+
+    print(f'Result Token: {result_token}')
+    print(f'Result limitation: {result_limitation}')
+
+    total_tokens = result_token[0] + result_token[1]
+
+    if total_tokens < result_limitation[0]:
+        return True
+    else:
+        return False

@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-import src.adapters.openai_adapter
-from src.adapters.openai_adapter import setup, generate_response
+from adapters import openai_adapter as ai
 
 
 class OpenaiAdapterTest_setup(unittest.TestCase):
@@ -9,11 +8,11 @@ class OpenaiAdapterTest_setup(unittest.TestCase):
         # prepare
 
         # run
-        setup('test_api_key')
+        ai.setup('test_api_key')
 
         # assert
         self.assertEqual(
-            src.adapters.openai_adapter.OPENAI_API_KEY, 'test_api_key')
+            ai.OPENAI_API_KEY, 'test_api_key')
 
 
 class OpenaiAdapterTest_generate_response(unittest.TestCase):
@@ -28,7 +27,7 @@ class OpenaiAdapterTest_generate_response(unittest.TestCase):
         )
 
         # run
-        result = generate_response('test_prompt')
+        result = ai.generate_response('test_prompt')
 
         # assert
         self.assertEqual(result, {'content': 'test_content', 'tokens': {
