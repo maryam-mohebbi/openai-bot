@@ -82,25 +82,27 @@ def tokens_count(username):
         return False
 
 
-def fetch_last_5_conversations(chat_id):
-    global cnx
+def find_previous_messages(message_id, depth=0, max_depth=10):
+    messages = []
+
+    if depth >= max_depth:
+        return messages
+
     cursor = cnx.cursor()
-    sql = '''
-    SELECT U_MESSAGES.TEXT, A_MESSAGES.TEXT AS ASSISTANT_TEXT FROM (
-        SELECT *
-        FROM MESSAGES
-        WHERE CHAT_ID = %s AND REPLY_MESSAGE_ID IS NOT NULL
-        ORDER BY DATETIME DESC
-        LIMIT 10
-    ) AS U_MESSAGES
-    JOIN MESSAGES AS A_MESSAGES ON U_MESSAGES.REPLY_MESSAGE_ID = A_MESSAGES.MESSAGE_ID
-    ORDER BY U_MESSAGES.DATETIME ASC
-    '''
-    cursor.execute(sql, (chat_id,))
-    result = cursor.fetchall()
+    sql = "SELECT MESSAGE_ID,REPLY_MESSAGE_ID,TEXT FROM MESSAGES WHERE MESSAGE_ID = %s"
+    cursor.execute(sql, (message_id,))
+    message = cursor.fetchone()
 
-    # Convert the result to a list of dictionaries
-    column_names = [desc[0] for desc in cursor.description]
-    result_dicts = [dict(zip(column_names, row)) for row in result]
+    if message:
+        # Convert the message to a dictionary
+        column_names = [desc[0] for desc in cursor.description]
+        message_dict = dict(zip(column_names, message))
 
-    return result_dicts
+        messages.append(message_dict)
+
+        if message_dict['REPLY_MESSAGE_ID'] is not None:
+            previous_messages = find_previous_messages(
+                message_dict['REPLY_MESSAGE_ID'], depth=depth + 1, max_depth=max_depth)
+            messages = messages + previous_messages
+
+    return messages
