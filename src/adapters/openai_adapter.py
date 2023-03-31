@@ -9,10 +9,25 @@ def setup(api_key):
     openai.api_key = OPENAI_API_KEY
 
 
-def generate_response(prompt):
+def generate_response(prompt, last_5_conversations):
+    messages = [{'role': 'system', 'content': 'You are a helpful assistant.'},
+                {'user': 'system', 'content': 'I need your help. I want to ask from you. Your answer should be simple but complete'},
+                {'assistant': 'system', 'content': 'Sure, I will help you in my best'},
+                ]
+
+    for convo in last_5_conversations:
+        # Use 'TEXT' instead of 'U_MESSAGES.TEXT'
+        user_message = {'role': 'user', 'content': convo['TEXT']}
+        # Use 'ASSISTANT_TEXT' instead of 'A_MESSAGES.TEXT'
+        assistant_message = {'role': 'assistant',
+                             'content': convo['ASSISTANT_TEXT']}
+        messages.extend([user_message, assistant_message])
+
+    messages.append({'role': 'user', 'content': prompt})
+
     response = openai.ChatCompletion.create(
         model='gpt-3.5-turbo',
-        messages=[{'role': 'user', 'content': prompt}],
+        messages=messages,
         max_tokens=1024,
         n=1,
         temperature=1,

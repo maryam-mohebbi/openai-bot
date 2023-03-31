@@ -37,7 +37,7 @@ async def handle_text(update, context):
         return
 
     if mysql.tokens_count(update.message.chat.username) == False:
-        await bot.reply_text(update, 'Sorry, The sum of tokens has exceeded 1000.')
+        await bot.reply_text(update, 'Sorry, The sum of tokens has exceeded.')
         return
 
     mysql.insert_message(chat_id=update.message.chat.id,
@@ -48,8 +48,11 @@ async def handle_text(update, context):
                          reply_message_id=update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None)
 
     text = update.message.text
+    last_5_conversations = mysql.fetch_last_5_conversations(
+        update.message.chat.id)
+
     try:
-        response = openai.generate_response(text)
+        response = openai.generate_response(text, last_5_conversations)
         mysql.update_message_tokens(update.message.message_id,
                                     response['tokens']['completion_tokens'],
                                     response['tokens']['prompt_tokens'])
