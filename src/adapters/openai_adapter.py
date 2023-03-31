@@ -11,8 +11,8 @@ def setup(api_key):
 
 def generate_response(prompt, last_5_conversations):
     messages = [{'role': 'system', 'content': 'You are a helpful assistant.'},
-                {'user': 'system', 'content': 'I need your help. I want to ask from you. Your answer should be simple but complete'},
-                {'assistant': 'system', 'content': 'Sure, I will help you in my best'},
+                {'role': 'user', 'content': 'I need your help. I want to ask from you. Your answer should be simple but complete'},
+                {'role': 'assistant', 'content': 'Sure, I will help you in my best'},
                 ]
 
     for convo in last_5_conversations:
@@ -32,6 +32,7 @@ def generate_response(prompt, last_5_conversations):
         n=1,
         temperature=1,
     )
+
     content = response.choices[0].message.content
     completion_tokens = response.usage.completion_tokens
     prompt_tokens = response.usage.prompt_tokens
