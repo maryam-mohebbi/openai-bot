@@ -80,3 +80,27 @@ def tokens_count(username):
         return True
     else:
         return False
+
+
+def fetch_last_5_conversations(chat_id):
+    global cnx
+    cursor = cnx.cursor()
+    sql = '''
+    SELECT U_MESSAGES.TEXT, A_MESSAGES.TEXT AS ASSISTANT_TEXT FROM (
+        SELECT *
+        FROM MESSAGES
+        WHERE CHAT_ID = %s AND REPLY_MESSAGE_ID IS NOT NULL
+        ORDER BY DATETIME DESC
+        LIMIT 5
+    ) AS U_MESSAGES
+    JOIN MESSAGES AS A_MESSAGES ON U_MESSAGES.REPLY_MESSAGE_ID = A_MESSAGES.MESSAGE_ID
+    ORDER BY U_MESSAGES.DATETIME ASC
+    '''
+    cursor.execute(sql, (chat_id,))
+    result = cursor.fetchall()
+
+    # Convert the result to a list of dictionaries
+    column_names = [desc[0] for desc in cursor.description]
+    result_dicts = [dict(zip(column_names, row)) for row in result]
+
+    return result_dicts

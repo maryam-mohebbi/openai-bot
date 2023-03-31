@@ -8,3 +8,4 @@ include/
 pyvenv.cfg
 .pybuilder/
 target/
+temp/
