@@ -53,7 +53,15 @@ async def handle_text(update, context):
         mysql.update_message_tokens(update.message.message_id,
                                     response['tokens']['completion_tokens'],
                                     response['tokens']['prompt_tokens'])
-        await bot.reply_text(update, response['content'], update.message.message_id)
+
+        reply_message = await bot.reply_text(update, response['content'], update.message.message_id)
+
+        mysql.insert_message(chat_id=reply_message.chat.id,
+                             username='ChatGPT_AI_PrivateBot',
+                             datetime=reply_message.date,
+                             message_id=reply_message.message_id,
+                             text=reply_message.text,
+                             reply_message_id=reply_message.reply_to_message.message_id if reply_message.reply_to_message is not None else None)
 
     except Exception as e:
         print(e)

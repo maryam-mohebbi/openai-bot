@@ -15,7 +15,7 @@ def add_message_handler(builder, fn):
 
 
 async def reply_text(update, text, message_id=None):
-    await update.message.reply_text(text=text, reply_to_message_id=message_id)
+    return await update.message.reply_text(text=text, reply_to_message_id=message_id)
 
 
 def start(builder):
