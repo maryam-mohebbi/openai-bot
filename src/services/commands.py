@@ -48,11 +48,11 @@ async def handle_text(update, context):
                          reply_message_id=update.message.reply_to_message.message_id if update.message.reply_to_message is not None else None)
 
     text = update.message.text
-    last_5_conversations = mysql.fetch_last_5_conversations(
-        update.message.chat.id)
+
+    previous_messages = mysql.find_previous_messages(update.message.message_id)
 
     try:
-        response = openai.generate_response(text, last_5_conversations)
+        response = openai.generate_response(text, previous_messages)
         mysql.update_message_tokens(update.message.message_id,
                                     response['tokens']['completion_tokens'],
                                     response['tokens']['prompt_tokens'])

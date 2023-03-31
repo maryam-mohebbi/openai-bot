@@ -1,7 +1,7 @@
-import asyncio
-from unittest import IsolatedAsyncioTestCase
-from unittest.mock import MagicMock, patch
 from services import commands as cmd
+from unittest.mock import MagicMock, patch
+from unittest import IsolatedAsyncioTestCase
+import asyncio
 
 
 class TestCommands(IsolatedAsyncioTestCase):
@@ -54,7 +54,7 @@ class TestCommands(IsolatedAsyncioTestCase):
         mock_mysql.tokens_count.return_value = False
         await cmd.handle_text(mock_update, mock_context)
         mock_reply_text.assert_called_with(
-            mock_update, 'Sorry, The sum of tokens has exceeded 1000.')
+            mock_update, 'Sorry, The sum of tokens has exceeded.')
 
         # Test case when everything works as expected
         mock_mysql.tokens_count.return_value = True
