@@ -10,7 +10,10 @@ def setup(api_key):
 
 
 def generate_response(prompt, last_5_conversations):
-    messages = [{'role': 'system', 'content': 'You are a helpful assistant.'}]
+    messages = [{'role': 'system', 'content': 'You are a helpful assistant.'},
+                {'user': 'system', 'content': 'I need your help. I want to ask from you. Your answer should be simple but complete'},
+                {'assistant': 'system', 'content': 'Sure, I will help you in my best'},
+                ]
 
     for convo in last_5_conversations:
         # Use 'TEXT' instead of 'U_MESSAGES.TEXT'
