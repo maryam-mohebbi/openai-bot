@@ -18,6 +18,7 @@ class OpenaiAdapterTest_setup(unittest.TestCase):
 class OpenaiAdapterTest_generate_response(unittest.TestCase):
     @patch('openai.ChatCompletion.create')
     def test_should_generate_response_correctly(self, mock_create):
+
         # prepare
         mock_create.return_value = MagicMock(
             choices=[
@@ -27,14 +28,19 @@ class OpenaiAdapterTest_generate_response(unittest.TestCase):
         )
 
         # run
-        result = ai.generate_response('test_prompt')
+        result = ai.generate_response('test_prompt', [])
 
         # assert
         self.assertEqual(result, {'content': 'test_content', 'tokens': {
                          'completion_tokens': 100, 'prompt_tokens': 50}})
         mock_create.assert_called_with(
             model='gpt-3.5-turbo',
-            messages=[{'role': 'user', 'content': 'test_prompt'}],
+            messages=[
+                {'role': 'system', 'content': 'You are a helpful assistant.'},
+                {'role': 'user', 'content': 'I need your help. I want to ask from you. Your answer should be simple but complete'},
+                {'role': 'assistant', 'content': 'Sure, I will help you in my best'},
+                {'role': 'user', 'content': 'test_prompt'}
+            ],
             max_tokens=1024,
             n=1,
             temperature=1,
