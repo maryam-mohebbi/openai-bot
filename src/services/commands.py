@@ -57,7 +57,7 @@ async def handle_text(update, context):
         reply_message = await bot.reply_text(update, response['content'], update.message.message_id)
 
         mysql.insert_message(chat_id=reply_message.chat.id,
-                             username='ChatGPT_AI_PrivateBot',
+                             username='OpenAi-Bot',
                              datetime=reply_message.date,
                              message_id=reply_message.message_id,
                              text=reply_message.text,
