@@ -1,4 +1,4 @@
-create table if not exists MESSAGES
+create table MESSAGES
 (
     ID                int auto_increment
         primary key,
@@ -14,13 +14,14 @@ create table if not exists MESSAGES
     UPDATE_AT         datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP
 );
 
-create table if not exists USERS
+create table USERS
 (
-    ID         int auto_increment
+    ID               int auto_increment
         primary key,
-    USERNAME   varchar(100)                       not null,
-    CREATED_AT datetime default CURRENT_TIMESTAMP not null,
-    UPDATED_AT datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    USERNAME         varchar(100)                       not null,
+    CREATED_AT       datetime default CURRENT_TIMESTAMP not null,
+    UPDATED_AT       datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+    TOKEN_LIMITATION int                                not null,
     constraint USERS_pk
         unique (USERNAME)
 );
