@@ -25,6 +25,9 @@ jobs:
       - name: lint
         run: |
           autopep8 --in-place --recursive ./src/
-      - name: Test and Build
+      - name: Test
+        run: |
+          cd src; python -m unittest discover -s test; cd ..
+      - name: Build
         run: |
           pyb --verbose
