@@ -1,7 +1,4 @@
 from mysql.connector import pooling
-from mysql.connector import Error
-from functools import wraps
-import mysql.connector
 
 connection_pool = None
 
