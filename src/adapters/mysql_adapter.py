@@ -1,37 +1,48 @@
+from mysql.connector import pooling
+from mysql.connector import Error
+from functools import wraps
 import mysql.connector
 
-cnx = ''
+connection_pool = None
 
 
 def sql_setup(host, port, user, password, database):
-    global cnx
-    cnx = mysql.connector.connect(
-        host=host,
-        port=port,
-        user=user,
-        password=password,
-        database=database
-    )
-    return cnx
+    global connection_pool
+    connection_pool = pooling.MySQLConnectionPool(pool_name="pynative_pool",
+                                                  pool_size=20,
+                                                  pool_reset_session=True,
+                                                  host=host,
+                                                  port=port,
+                                                  user=user,
+                                                  password=password,
+                                                  database=database)
+    return connection_pool
 
 
 def insert_message(chat_id, username, datetime, message_id, text, reply_message_id):
-    global cnx
-    cursor = cnx.cursor()
+    global connection_pool
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
     sql = 'INSERT INTO MESSAGES (CHAT_ID, USERNAME, DATETIME, MESSAGE_ID, TEXT, REPLY_MESSAGE_ID) VALUES (%s, %s, %s, %s, %s, %s)'
     val = (chat_id, username, datetime, message_id, text, reply_message_id)
     cursor.execute(sql, val)
-    cnx.commit()
+    connection_object.commit()
+
+    cursor.close()
+    connection_object.close()
 
 
 def does_user_exist(username):
-    global cnx
-    cursor = cnx.cursor()
+    global connection_pool
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
     sql = 'SELECT USERNAME FROM USERS WHERE USERNAME = %s'
     val = (username,)
     cursor.execute(sql, val)
     result = cursor.fetchone()
-    cnx.commit()
+    connection_object.commit()
+    cursor.close()
+    connection_object.close()
     if result is not None:
         return True
     else:
@@ -39,17 +50,21 @@ def does_user_exist(username):
 
 
 def update_message_tokens(message_id, completion_tokens, prompt_tokens):
-    global cnx
-    cursor = cnx.cursor()
+    global connection_pool
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
     sql = 'UPDATE MESSAGES SET COMPLETION_TOKENS=%s, PROMPT_TOKENS=%s WHERE MESSAGE_ID = %s'
     val = (completion_tokens, prompt_tokens, message_id)
     cursor.execute(sql, val)
-    cnx.commit()
+    connection_object.commit()
+    cursor.close()
+    connection_object.close()
 
 
 def tokens_count(username):
-    global cnx
-    cursor = cnx.cursor()
+    global connection_pool
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
     val = (username,)
 
     # Check if the user exists in the MESSAGES table
@@ -69,12 +84,14 @@ def tokens_count(username):
     cursor.execute(sql_limitation, val)
     result_limitation = cursor.fetchone()
 
-    cnx.commit()
+    connection_object.commit()
 
     print(f'Result Token: {result_token}')
     print(f'Result limitation: {result_limitation}')
 
     total_tokens = result_token[0] + result_token[1]
+    cursor.close()
+    connection_object.close()
 
     if total_tokens < result_limitation[0]:
         return True
@@ -83,15 +100,19 @@ def tokens_count(username):
 
 
 def find_previous_messages(message_id, depth=0, max_depth=10):
+    global connection_pool
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+
     messages = []
 
     if depth >= max_depth:
         return messages
 
-    cursor = cnx.cursor()
     sql = "SELECT MESSAGE_ID,REPLY_MESSAGE_ID,TEXT FROM MESSAGES WHERE MESSAGE_ID = %s"
     cursor.execute(sql, (message_id,))
     message = cursor.fetchone()
+    connection_object.commit()
 
     if message:
         # Convert the message to a dictionary
@@ -104,5 +125,7 @@ def find_previous_messages(message_id, depth=0, max_depth=10):
             previous_messages = find_previous_messages(
                 message_dict['REPLY_MESSAGE_ID'], depth=depth + 1, max_depth=max_depth)
             messages = messages + previous_messages
+    cursor.close()
+    connection_object.close()
 
     return messages
